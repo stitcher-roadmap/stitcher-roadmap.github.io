@@ -16,13 +16,13 @@
 <!-- Add to homescreen for Chrome on Android -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="application-name" content="StitcherSocial">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#fff">
 
 <!-- Add to homescreen for Safari on iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="white-translucent">
 <meta name="apple-mobile-web-app-title" content="Value Cards">
-<meta name="apple-mobile-web-app-status-bar-style" content="#000000">
+<meta name="apple-mobile-web-app-status-bar-style" content="#fff">
 
 <!-- Tile icon for Win8 -->
 <!-- <meta name="msapplication-TileColor" content="#090909">
@@ -65,6 +65,7 @@
   }
   .feature-image {
     width: 100%;
+    margin-bottom: -4px;
   }
   .title-block {
     padding: 0 16px 2px 16px;
@@ -79,9 +80,17 @@
     padding-bottom: 8px;
   }
   h2, .type {
+    font-weight: 400;
+    font-size: 14px;
+    color: #9B9B9B;
+  }
+  p {
     font-weight: 300;
     font-size: 14px;
     color: #9B9B9B;
+    text-align: left;
+    margin-left: 16px;
+    margin-right: 16px;
   }
   #logo {
     margin: auto 0;
@@ -123,7 +132,7 @@
     margin-bottom: 12px;
   }
   .kpi, .value {
-    font-weight: 500;
+    font-weight: 700;
   }
   progress {
     width: 100%;
@@ -136,7 +145,7 @@
     margin-bottom: 16px;
   }
   button {
-    width: 25%;
+    width: 22%;
     height: 40px;
     margin-top: 8px;
     border-radius: 2px;
@@ -224,7 +233,8 @@
 <template>
   <div class="card shadow-1" draggable="true">
     <div class="line-break">
-      <img class="feature-image" src="images/like-example.png">
+      <img class="feature-image" src="">
+      <p contenteditable class="image hide"></p>
     </div>
     <div class="title-block">
       <h1 contenteditable>Title</h1>
@@ -288,6 +298,8 @@
 
           temp.content.querySelector(".card").id = currentID;
 
+          temp.content.querySelector("img").src = newData.featureImgSrc;
+          temp.content.querySelector("p").textContent = newData.featureImgSrc;
           temp.content.querySelector("h1").textContent = newData.title;
           temp.content.querySelector("h2").textContent = newData.description;
 
@@ -335,9 +347,11 @@
     var saveButton = event.target.parentNode.parentNode.querySelectorAll('button')[1];
     var deleteButton = event.target.parentNode.parentNode.querySelectorAll('button')[2];
     var options = event.target.parentNode.parentNode.querySelector('.options');
+    var image = event.target.parentNode.parentNode.querySelector('p');
     saveButton.classList.toggle('hide');
     deleteButton.classList.toggle('hide');
     options.classList.toggle('hide');
+    image.classList.toggle('hide');
   }
 
   function updateColour(event) {
@@ -367,6 +381,7 @@
   function setCorrectTextColour (event, textColour, chosenColour) {
     event.target.parentNode.parentNode.style.backgroundColor = chosenColour;
     event.target.parentNode.parentNode.style.color = textColour;
+    event.target.parentNode.parentNode.querySelectorAll('p')[0].style.color = textColour;
     event.target.parentNode.parentNode.querySelectorAll('h2')[0].style.color = textColour;
     event.target.parentNode.parentNode.querySelectorAll('h2')[1].style.color = textColour;
     event.target.parentNode.parentNode.querySelectorAll('h2')[2].style.color = textColour;
@@ -398,6 +413,8 @@
 
     // Set fields of the mobileApps initiative that was clicked
     return initiativeRef.update({
+      featureImg: tempTitleRef.querySelector("img").src,
+      featureImgSrc: tempTitleRef.querySelector("p").textContent,
       title: tempTitleRef.querySelector("h1").textContent,
       description: tempTitleRef.querySelector("h2").textContent,
       primaryKpi: tempTitleRef.querySelectorAll(".kpi")[0].textContent,
@@ -426,11 +443,11 @@
     document.querySelector('body').removeChild(document.querySelector('#'+item));
 
     initiativeRef.delete().then(function() {
-      console.log("Document successfully deleted!");
+      console.log("Item successfully deleted!");
       toggleToast("Initiative successfully deleted!");
     }).catch(function(error) {
       console.error("Error removing document: ", error);
-      toggleToast("Sorry, something went wrong removing this initiative. Please try again.");
+      toggleToast("Sorry, something went wrong while removing this initiative. Please try again.");
     });
   }
 
@@ -438,6 +455,8 @@
     var tempID = ("initiative" + Math.round(Math.random()*100000000).toString());
 
     firebase.firestore().collection(teamName).doc(tempID).set({
+      featureImgSrc: "https://via.placeholder.com/320x150",
+      featureImg: "image url",
       title: "Title",
       description: "Description.",
       primaryKpi: "KPI",
@@ -458,6 +477,8 @@
 
     temp.content.querySelector(".card").id = (tempID);
 
+    temp.content.querySelector("img").src = "https://via.placeholder.com/320x150";
+    temp.content.querySelector("p").textContent = "image url";
     temp.content.querySelector("h1").textContent = "Title";
     temp.content.querySelector("h2").textContent = "Description.";
 
